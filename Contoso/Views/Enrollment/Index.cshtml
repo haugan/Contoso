@@ -1,13 +1,13 @@
 ﻿@model IEnumerable<Contoso.Models.Enrollment>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Enrollments";
 }
 
-<h2>Enrollments</h2>
+<h2>Enrollment index</h2>
 
 <p>
-    @Html.ActionLink("Register new enrollment", "Create")
+    @Html.ActionLink("Register new enrollment", "Create", "Enrollment", new { @class = "btn btn-success btn-sm" })
 </p>
 <table class="table">
     <tr>
@@ -35,9 +35,15 @@
             @Html.DisplayFor(modelItem => item.Grade)
         </td>
         <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.EnrollmentID }) |
-            @Html.ActionLink("Details", "Details", new { id=item.EnrollmentID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.EnrollmentID })
+            <a title="Edit this enrollment" href="@Url.Action("Edit", "Enrollment", new { id=item.EnrollmentID })" class="btn btn-warning btn-xs">
+                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+            </a>
+            <a title="View enrollment details" href="@Url.Action("Details", "Enrollment", new { id=item.EnrollmentID })" class="btn btn-primary btn-xs">
+                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+            </a>
+            <a title="Delete this enrollment" href="@Url.Action("Delete", "Enrollment", new { id=item.EnrollmentID })" class="btn btn-danger btn-xs">
+                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+            </a>
         </td>
     </tr>
 }
