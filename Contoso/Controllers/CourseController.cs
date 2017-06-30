@@ -26,7 +26,7 @@ namespace Contoso.Controllers
             Course course = db.Courses.Find(id);
 
             if (course == null)
-                return HttpNotFound();
+                return HttpNotFound($"No course found matching id: {id}.");
 
             return View(course);
         }

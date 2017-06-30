@@ -27,7 +27,7 @@ namespace Contoso.Controllers
             Enrollment enrollment = db.Enrollments.Find(id);
 
             if (enrollment == null)
-                return HttpNotFound();
+                return HttpNotFound($"No enrollment found matching id: {id}.");
 
             return View(enrollment);
         }

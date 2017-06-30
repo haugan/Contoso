@@ -25,7 +25,7 @@ namespace Contoso.Controllers
 
             Student student = db.Students.Find(id);
             if (student == null)
-                return HttpNotFound();
+                return HttpNotFound($"No student found matching id: {id}.");
 
             return View(student);
         }
