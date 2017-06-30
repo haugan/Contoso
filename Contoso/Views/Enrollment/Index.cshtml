@@ -7,9 +7,9 @@
 <h2>Enrollment index</h2>
 
 <p>
-    @Html.ActionLink("Register new enrollment", "Create", "Enrollment", new { @class = "btn btn-success btn-sm" })
+    @Html.ActionLink("Register new", "Create", "Enrollment", new { @class = "btn btn-primary btn-sm" })
 </p>
-<table class="table table-responsive table-hover">
+<table class="table table-responsive table-striped table-hover">
     <tr>
         <th>
             @Html.DisplayNameFor(model => model.Course.Title)
@@ -38,7 +38,7 @@
             <a title="Edit this enrollment" href="@Url.Action("Edit", "Enrollment", new { id=item.EnrollmentID })" class="btn btn-warning btn-xs">
                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
             </a>
-            <a title="View enrollment details" href="@Url.Action("Details", "Enrollment", new { id=item.EnrollmentID })" class="btn btn-primary btn-xs">
+            <a title="View enrollment details" href="@Url.Action("Details", "Enrollment", new { id=item.EnrollmentID })" class="btn btn-info btn-xs">
                 <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
             </a>
             <a title="Delete this enrollment" href="@Url.Action("Delete", "Enrollment", new { id=item.EnrollmentID })" class="btn btn-danger btn-xs">

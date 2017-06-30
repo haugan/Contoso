@@ -37,6 +37,8 @@
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.EnrollmentID }) |
-    @Html.ActionLink("Back to List", "Index")
+    <a title="Back to index" href="@Url.Action("Index", "Student")" class="btn btn-link">
+        <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+        Back to index
+    </a>
 </p>

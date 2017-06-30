@@ -4,7 +4,7 @@
     ViewBag.Title = "Create";
 }
 
-<h2>Create</h2>
+<h2>Register course</h2>
 
 
 @using (Html.BeginForm()) 
@@ -12,7 +12,7 @@
     @Html.AntiForgeryToken()
     
     <div class="form-horizontal">
-        <h4>Course</h4>
+        <h4>Please fill out all the required fields and click the register button.</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         <div class="form-group">
@@ -41,14 +41,20 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <button title="Register new course" type="submit" class="btn btn-success">
+                    <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+                    Register
+                </button>
             </div>
         </div>
     </div>
 }
 
 <div>
-    @Html.ActionLink("Back to List", "Index")
+    <a title="Back to index" href="@Url.Action("Index", "Student")" class="btn btn-link">
+        <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+        Back to index
+    </a>
 </div>
 
 @section Scripts {
