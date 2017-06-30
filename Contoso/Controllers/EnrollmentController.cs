@@ -22,14 +22,13 @@ namespace Contoso.Controllers
         public ActionResult Details(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+
             Enrollment enrollment = db.Enrollments.Find(id);
+
             if (enrollment == null)
-            {
                 return HttpNotFound();
-            }
+
             return View(enrollment);
         }
 
@@ -38,6 +37,7 @@ namespace Contoso.Controllers
         {
             ViewBag.CourseID = new SelectList(db.Courses, "CourseID", "Title");
             ViewBag.StudentID = new SelectList(db.Students, "ID", "LastName");
+
             return View();
         }
 
@@ -52,11 +52,13 @@ namespace Contoso.Controllers
             {
                 db.Enrollments.Add(enrollment);
                 db.SaveChanges();
+
                 return RedirectToAction("Index");
             }
 
             ViewBag.CourseID = new SelectList(db.Courses, "CourseID", "Title", enrollment.CourseID);
             ViewBag.StudentID = new SelectList(db.Students, "ID", "LastName", enrollment.StudentID);
+
             return View(enrollment);
         }
 
@@ -64,16 +66,16 @@ namespace Contoso.Controllers
         public ActionResult Edit(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+
             Enrollment enrollment = db.Enrollments.Find(id);
+
             if (enrollment == null)
-            {
                 return HttpNotFound();
-            }
+
             ViewBag.CourseID = new SelectList(db.Courses, "CourseID", "Title", enrollment.CourseID);
             ViewBag.StudentID = new SelectList(db.Students, "ID", "LastName", enrollment.StudentID);
+
             return View(enrollment);
         }
 
@@ -88,10 +90,13 @@ namespace Contoso.Controllers
             {
                 db.Entry(enrollment).State = EntityState.Modified;
                 db.SaveChanges();
+
                 return RedirectToAction("Index");
             }
+
             ViewBag.CourseID = new SelectList(db.Courses, "CourseID", "Title", enrollment.CourseID);
             ViewBag.StudentID = new SelectList(db.Students, "ID", "LastName", enrollment.StudentID);
+
             return View(enrollment);
         }
 
@@ -99,14 +104,13 @@ namespace Contoso.Controllers
         public ActionResult Delete(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+
             Enrollment enrollment = db.Enrollments.Find(id);
+
             if (enrollment == null)
-            {
                 return HttpNotFound();
-            }
+
             return View(enrollment);
         }
 
@@ -118,15 +122,15 @@ namespace Contoso.Controllers
             Enrollment enrollment = db.Enrollments.Find(id);
             db.Enrollments.Remove(enrollment);
             db.SaveChanges();
+
             return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
-            {
                 db.Dispose();
-            }
+
             base.Dispose(disposing);
         }
     }

@@ -21,14 +21,13 @@ namespace Contoso.Controllers
         public ActionResult Details(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+
             Course course = db.Courses.Find(id);
+
             if (course == null)
-            {
                 return HttpNotFound();
-            }
+
             return View(course);
         }
 
@@ -59,15 +58,14 @@ namespace Contoso.Controllers
         public ActionResult Edit(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+
             Course course = db.Courses.Find(id);
+
             if (course == null)
-            {
                 return HttpNotFound();
-            }
-            return View(course);
+
+                return View(course);
         }
 
         // POST: Course/Edit/5
@@ -83,6 +81,7 @@ namespace Contoso.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+
             return View(course);
         }
 
@@ -90,14 +89,13 @@ namespace Contoso.Controllers
         public ActionResult Delete(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+
             Course course = db.Courses.Find(id);
+
             if (course == null)
-            {
                 return HttpNotFound();
-            }
+
             return View(course);
         }
 
@@ -109,15 +107,15 @@ namespace Contoso.Controllers
             Course course = db.Courses.Find(id);
             db.Courses.Remove(course);
             db.SaveChanges();
+
             return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
-            {
                 db.Dispose();
-            }
+
             base.Dispose(disposing);
         }
     }

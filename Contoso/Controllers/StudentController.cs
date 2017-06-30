@@ -21,14 +21,12 @@ namespace Contoso.Controllers
         public ActionResult Details(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+
             Student student = db.Students.Find(id);
             if (student == null)
-            {
                 return HttpNotFound();
-            }
+
             return View(student);
         }
 
@@ -59,14 +57,12 @@ namespace Contoso.Controllers
         public ActionResult Edit(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+
             Student student = db.Students.Find(id);
             if (student == null)
-            {
                 return HttpNotFound();
-            }
+
             return View(student);
         }
 
@@ -83,6 +79,7 @@ namespace Contoso.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+
             return View(student);
         }
 
@@ -90,14 +87,13 @@ namespace Contoso.Controllers
         public ActionResult Delete(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+
             Student student = db.Students.Find(id);
+
             if (student == null)
-            {
                 return HttpNotFound();
-            }
+
             return View(student);
         }
 
@@ -109,15 +105,15 @@ namespace Contoso.Controllers
             Student student = db.Students.Find(id);
             db.Students.Remove(student);
             db.SaveChanges();
+
             return RedirectToAction("Index");
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
-            {
                 db.Dispose();
-            }
+
             base.Dispose(disposing);
         }
     }
