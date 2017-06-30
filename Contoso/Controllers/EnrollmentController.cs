@@ -1,5 +1,6 @@
 ﻿using Contoso.DAL;
 using Contoso.Models;
+using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -46,14 +47,22 @@ namespace Contoso.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "EnrollmentID,CourseID,StudentID,Grade")] Enrollment enrollment)
+        public ActionResult Create([Bind(Include = "CourseID,StudentID,Grade")] Enrollment enrollment)
         {
-            if (ModelState.IsValid)
+            try
             {
-                db.Enrollments.Add(enrollment);
-                db.SaveChanges();
+                if (ModelState.IsValid)
+                {
+                    db.Enrollments.Add(enrollment);
+                    db.SaveChanges();
 
-                return RedirectToAction("Index");
+                    return RedirectToAction("Index");
+                }
+            }
+            catch (DataException /*dex*/)
+            {
+                // TODO: Write line to log error.
+                ModelState.AddModelError("", "Could not create new enrollment object.");
             }
 
             ViewBag.CourseID = new SelectList(db.Courses, "CourseID", "Title", enrollment.CourseID);

@@ -24,8 +24,7 @@ namespace Contoso
                       "~/Scripts/respond.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
-                      //"~/Content/bootstrap.css",
-                      "~/Content/bootswatch-yeti.css",
+                      "~/Content/bootswatch-simplex.css",
                       "~/Content/site.css"));
         }
     }

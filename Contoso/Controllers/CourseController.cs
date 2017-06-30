@@ -1,5 +1,6 @@
 ﻿using Contoso.DAL;
 using Contoso.Models;
+using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -44,11 +45,20 @@ namespace Contoso.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "CourseID,Title,Credits")] Course course)
         {
-            if (ModelState.IsValid)
+            try
             {
-                db.Courses.Add(course);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                if (ModelState.IsValid)
+                {
+                    db.Courses.Add(course);
+                    db.SaveChanges();
+
+                    return RedirectToAction("Index");
+                }
+            }
+            catch (DataException /*dex*/)
+            {
+                // TODO: Write line to log error.
+                ModelState.AddModelError("", "Could not create new course object.");
             }
 
             return View(course);
