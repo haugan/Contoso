@@ -13,6 +13,10 @@
     
     <div class="form-horizontal">
         <h4>Please enter your changes and click the save button.</h4>
+        <a title="Back to index" href="@Url.Action("Index", "Enrollment")">
+            <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+            Back to index
+        </a>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.EnrollmentID)
@@ -47,10 +51,6 @@
                     <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
                     Save
                 </button>
-                <a title="Back to index" href="@Url.Action("Index", "Enrollment")" class="btn btn-link">
-                    <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
-                    Back to index
-                </a>
             </div>
         </div>
     </div>

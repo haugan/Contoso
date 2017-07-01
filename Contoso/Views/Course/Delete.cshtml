@@ -7,6 +7,10 @@
 <h2>Delete course</h2>
 <div>
     <h4>This action can not be undone.</h4>
+    <a title="Back to index" href="@Url.Action("Index", "Course")">
+        <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+        Back to index
+    </a>
     <hr />
     <dl class="dl-horizontal">
         <dt>
@@ -27,14 +31,11 @@
         @Html.AntiForgeryToken()
 
         <div class="form-actions no-color">
-            <a title="Back to index" href="@Url.Action("Index", "Course")" class="btn btn-link">
-                <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
-                Back to index
-            </a>
             <button title="Delete this course" type="submit" class="btn btn-danger">
                 <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                 Delete
             </button>
         </div>
     }
+
 </div>
