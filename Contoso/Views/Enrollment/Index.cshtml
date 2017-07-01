@@ -57,6 +57,8 @@
 }
 
 </table>
-<p>
-    @Html.ActionLink("New enrollment", "Create", "Enrollment", new { @class = "btn btn-success btn-sm", title="Register new enrollment" })
-</p>
+
+<a title="Register new enrollment" href="@Url.Action("Create", "Enrollment", new { @class = "btn btn-success" })" class="btn btn-success">
+    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+    New enrollment
+</a>
