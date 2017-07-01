@@ -84,15 +84,18 @@ namespace Contoso.Controllers
         public ActionResult EditPost(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+
             var studentToUpdate = db.Students.Find(id);
+
+            // Set Modified flag on entity, whitelisted fields in parameters.
             if (TryUpdateModel(studentToUpdate, "",
                new string[] { "LastName", "FirstMidName", "EnrollmentDate" }))
             {
                 try
                 {
+                    // Flag causes EF to create SQL to update ALL columns in db row (even the ones not changed).
+                    // Set entity to Unchanged and individual fields to Modified to control column updates.
                     db.SaveChanges();
 
                     return RedirectToAction("Index");
@@ -103,6 +106,7 @@ namespace Contoso.Controllers
                     ModelState.AddModelError("", "Unable to save changes, please try again.");
                 }
             }
+
             return View(studentToUpdate);
         }
 

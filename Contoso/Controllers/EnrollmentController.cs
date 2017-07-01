@@ -99,10 +99,14 @@ namespace Contoso.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
             var enrollmentToUpdate = db.Enrollments.Find(id);
+
+            // Set Modified flag on entity, whitelisted fields in parameters.
             if (TryUpdateModel(enrollmentToUpdate, "", new string[] { "CourseID", "StudentID", "Grade" }))
             {
                 try
                 {
+                    // Flag causes EF to create SQL to update ALL columns in db row (even the ones not changed).
+                    // Set entity to Unchanged and individual fields to Modified to control column updates.
                     db.SaveChanges();
 
                     return RedirectToAction("Index");

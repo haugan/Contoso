@@ -89,17 +89,21 @@ namespace Contoso.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
             var courseToUpdate = db.Courses.Find(id);
+
+            // Set Modified flag on entity, whitelisted fields in parameters.
             if (TryUpdateModel(courseToUpdate, "", new string[] { "CourseID", "Title", "Credits" }))
             {
                 try
                 {
+                    // Flag causes EF to create SQL to update ALL columns in db row (even the ones not changed).
+                    // Set entity to Unchanged and individual fields to Modified to control column updates.
                     db.SaveChanges();
 
                     return RedirectToAction("Index");
                 }
                 catch (DataException /* dex */)
                 {
-                    //Log the error (uncomment dex variable name and add a line here to write a log.
+                    // Log the error (uncomment dex variable name and add a line here to write a log.
                     ModelState.AddModelError("", "Unable to save changes, please try again.");
                 }
             }
