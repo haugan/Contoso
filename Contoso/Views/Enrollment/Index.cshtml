@@ -14,15 +14,9 @@
 </div>
 <table class="table table-responsive table-striped table-hover">
     <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Course.Title)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Student.LastName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Grade)
-        </th>
+        <th>Course title</th>
+        <th>Student name</th>
+        <th>Student grade</th>
         <th></th>
     </tr>
 
@@ -35,9 +29,8 @@
         </td>
         <td>
             <a title="View student details" href="@Url.Action("Details", "Student", new { id=item.StudentID })">
-                @item.Student.LastName    
-            </a>, 
-            @Html.DisplayFor(modelItem => item.Student.FirstMidName)
+                @item.Student.LastName, @Html.DisplayFor(modelItem => item.Student.FirstMidName) 
+            </a>
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Grade)
