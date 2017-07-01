@@ -57,7 +57,7 @@ namespace Contoso.Controllers
             catch (DataException /*dex*/)
             {
                 // TODO: Write line to log error.
-                ModelState.AddModelError("", "Could not create new student object.");                
+                ModelState.AddModelError("", "Could not create new student object., please try again.");                
             }
 
             return View(student);

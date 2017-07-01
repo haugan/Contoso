@@ -62,7 +62,7 @@ namespace Contoso.Controllers
             catch (DataException /*dex*/)
             {
                 // TODO: Write line to log error.
-                ModelState.AddModelError("", "Could not create new enrollment object.");
+                ModelState.AddModelError("", "Could not create new enrollment object, please try again.");
             }
 
             ViewBag.CourseID = new SelectList(db.Courses, "CourseID", "Title", enrollment.CourseID);
