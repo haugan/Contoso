@@ -14,33 +14,22 @@
 </div>
 <div>
     <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Credits)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Credits)
-        </dd>
+        <dt>Course title</dt>
+        <dd>@Html.DisplayFor(model => model.Title)</dd>
+        <dt>Course credits</dt>
+        <dd>@Html.DisplayFor(model => model.Credits)</dd>
+        <dt>Student enrollments</dt>
         <dd>
             <table class="table table-responsive table-striped table-hover">
                 <tr>
-                    <th>LastName</th>
-                    <th>FirstMidName</th>
-                    <th>EnrollmentDate</th>
+                    <th>Student name</th>
+                    <th>Enrollment date</th>
                 </tr>
                 @foreach (var item in Model.Enrollments)
                 {
                     <tr>
                         <td>
                             <a title="View course details" href="@Url.Action("Details", "Student", new { id=item.StudentID})">@item.Student.LastName, @item.Student.FirstMidName</a>
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Student.FirstMidName)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Student.EnrollmentDate)

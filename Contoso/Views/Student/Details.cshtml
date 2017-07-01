@@ -14,32 +14,18 @@
 </div>
 <div>
     <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.LastName)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.LastName)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.FirstMidName)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.FirstMidName)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.EnrollmentDate)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.EnrollmentDate)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Enrollments)
-        </dt>
+        <dt>Lastname</dt>
+        <dd>@Html.DisplayFor(model => model.LastName)</dd>
+        <dt>Firstname</dt>
+        <dd>@Html.DisplayFor(model => model.FirstMidName)</dd>
+        <dt>Enrollment date</dt>
+        <dd>@Html.DisplayFor(model => model.EnrollmentDate)</dd>
+        <dt>Course enrollments</dt>
         <dd>
             <table class="table table-responsive table-striped table-hover">
                 <tr>
-                    <th>Course Title</th>
-                    <th>Grade</th>
+                    <th>Course title</th>
+                    <th>Student grade</th>
                 </tr>
                 @foreach (var item in Model.Enrollments)
                 {
