@@ -4,10 +4,15 @@
     ViewBag.Title = "Details";
 }
 
-<h2>Details</h2>
+<div class="page-header">
+    <h1>Course details</h1>
+    <h4>View registered data on this course.</h4>
+    <a title="Back to index" href="@Url.Action("Index", "Course")">
+        <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+        Back to index
+    </a>
+</div>
 <div>
-    <h4>Course</h4>
-    <hr />
     <dl class="dl-horizontal">
         <dt>
             @Html.DisplayNameFor(model => model.Title)
@@ -23,9 +28,3 @@
         </dd>
     </dl>
 </div>
-<p>
-    <a title="Back to index" href="@Url.Action("Index", "Course")" class="btn btn-link">
-        <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
-        Back to index
-    </a>
-</p>
