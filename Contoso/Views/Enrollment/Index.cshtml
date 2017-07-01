@@ -4,10 +4,14 @@
     ViewBag.Title = "Enrollments";
 }
 
-<h2>Enrollment index</h2>
-<p>
-    @Html.ActionLink("Register new", "Create", "Enrollment", new { @class = "btn btn-success btn-sm" })
-</p>
+<div class="page-header">
+    <h1>Enrollment index</h1>
+    <h4>Click new enrollment to register.</h4>
+    <a title="Back to index" href="@Url.Action("Index", "Home")">
+        <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+        Back to home
+    </a>
+</div>
 <table class="table table-responsive table-striped table-hover">
     <tr>
         <th>
@@ -48,3 +52,6 @@
 }
 
 </table>
+<p>
+    @Html.ActionLink("New enrollment", "Create", "Enrollment", new { @class = "btn btn-success btn-sm", title="Register new enrollment" })
+</p>
