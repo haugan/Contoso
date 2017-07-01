@@ -29,10 +29,15 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.Course.Title)
+            <a title="View course details" href="@Url.Action("Details", "Course", new { id=item.CourseID })">
+                @item.Course.Title
+            </a>
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Student.LastName)
+            <a title="View student details" href="@Url.Action("Details", "Student", new { id=item.StudentID })">
+                @item.Student.LastName    
+            </a>, 
+            @Html.DisplayFor(modelItem => item.Student.FirstMidName)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.Grade)
