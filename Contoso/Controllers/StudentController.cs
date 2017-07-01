@@ -57,7 +57,7 @@ namespace Contoso.Controllers
             catch (DataException /*dex*/)
             {
                 // TODO: Write line to log error.
-                ModelState.AddModelError("", "Could not create new student object., please try again.");                
+                ModelState.AddModelError("", "Unable to register new student, please try again.");                
             }
 
             return View(student);
@@ -79,19 +79,33 @@ namespace Contoso.Controllers
         // POST: Student/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,LastName,FirstMidName,EnrollmentDate")] Student student)
+        public ActionResult EditPost(int? id)
         {
-            if (ModelState.IsValid)
+            if (id == null)
             {
-                db.Entry(student).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+            var studentToUpdate = db.Students.Find(id);
+            if (TryUpdateModel(studentToUpdate, "",
+               new string[] { "LastName", "FirstMidName", "EnrollmentDate" }))
+            {
+                try
+                {
+                    db.SaveChanges();
 
-            return View(student);
+                    return RedirectToAction("Index");
+                }
+                catch (DataException /* dex */)
+                {
+                    //Log the error (uncomment dex variable name and add a line here to write a log.
+                    ModelState.AddModelError("", "Unable to save changes, please try again.");
+                }
+            }
+            return View(studentToUpdate);
         }
+
 
         // GET: Student/Delete/5
         public ActionResult Delete(int? id)

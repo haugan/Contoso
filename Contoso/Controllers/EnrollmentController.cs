@@ -62,7 +62,7 @@ namespace Contoso.Controllers
             catch (DataException /*dex*/)
             {
                 // TODO: Write line to log error.
-                ModelState.AddModelError("", "Could not create new enrollment object, please try again.");
+                ModelState.AddModelError("", "Unable to register new enrollment, please try again.");
             }
 
             ViewBag.CourseID = new SelectList(db.Courses, "CourseID", "Title", enrollment.CourseID);
@@ -91,22 +91,30 @@ namespace Contoso.Controllers
         // POST: Enrollment/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "EnrollmentID,CourseID,StudentID,Grade")] Enrollment enrollment)
+        public ActionResult EditPost(int? id)
         {
-            if (ModelState.IsValid)
-            {
-                db.Entry(enrollment).State = EntityState.Modified;
-                db.SaveChanges();
+            if (id == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-                return RedirectToAction("Index");
+            var enrollmentToUpdate = db.Enrollments.Find(id);
+            if (TryUpdateModel(enrollmentToUpdate, "", new string[] { "CourseID", "StudentID", "Grade" }))
+            {
+                try
+                {
+                    db.SaveChanges();
+
+                    return RedirectToAction("Index");
+                }
+                catch (DataException /* dex */)
+                {
+                    //Log the error (uncomment dex variable name and add a line here to write a log.
+                    ModelState.AddModelError("", "Unable to save changes, please try again.");
+                }
             }
 
-            ViewBag.CourseID = new SelectList(db.Courses, "CourseID", "Title", enrollment.CourseID);
-            ViewBag.StudentID = new SelectList(db.Students, "ID", "LastName", enrollment.StudentID);
-
-            return View(enrollment);
+            return View(enrollmentToUpdate);
         }
 
         // GET: Enrollment/Delete/5

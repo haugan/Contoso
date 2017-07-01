@@ -58,7 +58,7 @@ namespace Contoso.Controllers
             catch (DataException /*dex*/)
             {
                 // TODO: Write line to log error.
-                ModelState.AddModelError("", "Could not create new course object, please try again.");
+                ModelState.AddModelError("", "Unable to register new course, please try again.");
             }
 
             return View(course);
@@ -81,18 +81,30 @@ namespace Contoso.Controllers
         // POST: Course/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "CourseID,Title,Credits")] Course course)
+        public ActionResult EditPost(int? id)
         {
-            if (ModelState.IsValid)
+            if (id == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            var courseToUpdate = db.Courses.Find(id);
+            if (TryUpdateModel(courseToUpdate, "", new string[] { "CourseID", "Title", "Credits" }))
             {
-                db.Entry(course).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                try
+                {
+                    db.SaveChanges();
+
+                    return RedirectToAction("Index");
+                }
+                catch (DataException /* dex */)
+                {
+                    //Log the error (uncomment dex variable name and add a line here to write a log.
+                    ModelState.AddModelError("", "Unable to save changes, please try again.");
+                }
             }
 
-            return View(course);
+            return View(courseToUpdate);
         }
 
         // GET: Course/Delete/5
