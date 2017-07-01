@@ -4,17 +4,23 @@
     ViewBag.Title = "Create";
 }
 
-<h2>Register course</h2>
-
+<div class="page-header">
+    <h1>Register course</h1>
+    <h4>Enter required data and click the save button.</h4>
+    <a title="Back to index" href="@Url.Action("Index", "Course")">
+        <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+        Back to index
+    </a>
+</div>
 
 @using (Html.BeginForm()) 
 {
     @Html.AntiForgeryToken()
     
     <div class="form-horizontal">
-        <h4>Please fill out all the required fields and click the save button.</h4>
-        <hr />
+
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
         <div class="form-group">
             @Html.LabelFor(model => model.CourseID, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -22,7 +28,6 @@
                 @Html.ValidationMessageFor(model => model.CourseID, "", new { @class = "text-danger" })
             </div>
         </div>
-
         <div class="form-group">
             @Html.LabelFor(model => model.Title, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -30,7 +35,6 @@
                 @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
             </div>
         </div>
-
         <div class="form-group">
             @Html.LabelFor(model => model.Credits, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -38,7 +42,6 @@
                 @Html.ValidationMessageFor(model => model.Credits, "", new { @class = "text-danger" })
             </div>
         </div>
-
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <button title="Register new course" type="submit" class="btn btn-success">
@@ -49,13 +52,6 @@
         </div>
     </div>
 }
-
-<div>
-    <a title="Back to index" href="@Url.Action("Index", "Course")" class="btn btn-link">
-        <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
-        Back to index
-    </a>
-</div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
