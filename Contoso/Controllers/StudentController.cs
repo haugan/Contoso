@@ -55,7 +55,7 @@ namespace Contoso.Controllers
                     return RedirectToAction("Index");
                 }
             }
-            catch (DataException dex/)
+            catch (DataException dex)
             {
                 Console.WriteLine($"DataException: {dex.Message}");
                 ModelState.AddModelError("", "Unable to register new student, please try again.");                
