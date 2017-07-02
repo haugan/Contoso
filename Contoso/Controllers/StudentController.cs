@@ -108,12 +108,14 @@ namespace Contoso.Controllers
             return View(existingStudent);
         }
 
-
         // GET: Student/Delete/5
-        public ActionResult Delete(int? id)
+        public ActionResult Delete(int? id, bool? saveChangesError = false)
         {
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+
+            if (saveChangesError.GetValueOrDefault())
+                ViewBag.ErrorMessage = "Unable to delete student, please try again.";
 
             Student student = db.Students.Find(id);
 
@@ -124,14 +126,24 @@ namespace Contoso.Controllers
         }
 
         // POST: Student/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult Delete(int id)
         {
-            Student student = db.Students.Find(id);
-            db.Students.Remove(student);
-            db.SaveChanges();
-
+            try
+            {
+                // Avoid unnecessary SQL query for retrieving row
+                var studentToDelete = new Student () { ID = id };
+                // Set state of entity in context to Deleted (not yet removed from data store)
+                db.Entry(studentToDelete).State = EntityState.Deleted;
+                // Generate SQL DELETE command
+                db.SaveChanges();
+            }
+            catch (DataException dex)
+            {
+                Console.WriteLine($"DataException: {dex.Message}");
+                return RedirectToAction("Delete", new { id = id, saveChangesError = true });
+            }
             return RedirectToAction("Index");
         }
 

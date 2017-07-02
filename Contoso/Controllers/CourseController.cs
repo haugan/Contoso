@@ -125,14 +125,24 @@ namespace Contoso.Controllers
         }
 
         // POST: Course/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
+        public ActionResult Delete(int id)
         {
-            Course course = db.Courses.Find(id);
-            db.Courses.Remove(course);
-            db.SaveChanges();
-
+            try
+            {
+                // Avoid unnecessary SQL query for retrieving row
+                var courseToDelete = new Course () { CourseID = id };
+                // Set state of entity in context to Deleted (not yet removed from data store)
+                db.Entry(courseToDelete).State = EntityState.Deleted;
+                // Generate SQL DELETE command
+                db.SaveChanges();
+            }
+            catch (DataException dex)
+            {
+                Console.WriteLine($"DataException: {dex.Message}");
+                return RedirectToAction("Delete", new { id = id, saveChangesError = true });
+            }
             return RedirectToAction("Index");
         }
 
