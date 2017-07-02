@@ -122,13 +122,15 @@ namespace Contoso.Controllers
         }
 
         // GET: Enrollment/Delete/5
-        public ActionResult Delete(int? id)
+        public ActionResult Delete(int? id, bool? saveChangesError = false)
         {
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            Enrollment enrollment = db.Enrollments.Find(id);
+            if (saveChangesError.GetValueOrDefault())
+                ViewBag.ErrorMessage = "Unable to delete enrollment, please try again.";
 
+            Enrollment enrollment = db.Enrollments.Find(id);
             if (enrollment == null)
                 return HttpNotFound();
 

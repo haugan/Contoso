@@ -118,7 +118,6 @@ namespace Contoso.Controllers
                 ViewBag.ErrorMessage = "Unable to delete student, please try again.";
 
             Student student = db.Students.Find(id);
-
             if (student == null)
                 return HttpNotFound();
 

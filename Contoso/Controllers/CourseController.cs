@@ -111,13 +111,15 @@ namespace Contoso.Controllers
         }
 
         // GET: Course/Delete/5
-        public ActionResult Delete(int? id)
+        public ActionResult Delete(int? id, bool? saveChangesError = false)
         {
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            Course course = db.Courses.Find(id);
+            if (saveChangesError.GetValueOrDefault())
+                ViewBag.ErrorMessage = "Unable to delete course, please try again.";
 
+            Course course = db.Courses.Find(id);
             if (course == null)
                 return HttpNotFound();
 
