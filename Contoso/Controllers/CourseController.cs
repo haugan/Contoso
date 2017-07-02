@@ -16,7 +16,9 @@ namespace Contoso.Controllers
         // GET: Course
         public ActionResult Index()
         {
-            return View(db.Courses.ToList());
+            var courses = db.Courses.ToList();
+            db.Dispose();
+            return View(courses);
         }
 
         // GET: Course/Details/5
@@ -26,10 +28,13 @@ namespace Contoso.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
             Course course = db.Courses.Find(id);
-
             if (course == null)
+            {
+                db.Dispose();
                 return HttpNotFound($"No course found matching id: {id}.");
+            }
 
+            db.Dispose();
             return View(course);
         }
 
@@ -52,7 +57,7 @@ namespace Contoso.Controllers
                 {
                     db.Courses.Add(course);
                     db.SaveChanges();
-
+                    db.Dispose();
                     return RedirectToAction("Index");
                 }
             }
@@ -62,6 +67,7 @@ namespace Contoso.Controllers
                 ModelState.AddModelError("", "Unable to register new course, please try again.");
             }
 
+            db.Dispose();
             return View(course);
         }
 
@@ -71,12 +77,15 @@ namespace Contoso.Controllers
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            Course course = db.Courses.Find(id);
-
+            var course = db.Courses.Find(id);
             if (course == null)
+            {
+                db.Dispose();
                 return HttpNotFound();
+            }
 
-                return View(course);
+            db.Dispose();
+            return View(course);
         }
 
         // POST: Course/Edit/5
@@ -90,7 +99,6 @@ namespace Contoso.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
             var courseToUpdate = db.Courses.Find(id);
-
             // Set Modified flag on entity, whitelisted fields in parameters.
             // Future data model fields are automatically "blacklisted" until added here.
             if (TryUpdateModel(courseToUpdate, new string[] { "CourseID", "Title", "Credits" }))
@@ -98,6 +106,7 @@ namespace Contoso.Controllers
                 try
                 {
                     db.SaveChanges();
+                    db.Dispose();
                     return RedirectToAction("Index");
                 }
                 catch (DataException dex)
@@ -107,6 +116,7 @@ namespace Contoso.Controllers
                 }
             }
 
+            db.Dispose();
             return View(courseToUpdate);
         }
 
@@ -119,10 +129,14 @@ namespace Contoso.Controllers
             if (saveChangesError.GetValueOrDefault())
                 ViewBag.ErrorMessage = "Unable to delete course, please try again.";
 
-            Course course = db.Courses.Find(id);
+            var course = db.Courses.Find(id);
             if (course == null)
+            {
+                db.Dispose();
                 return HttpNotFound();
+            }
 
+            db.Dispose();
             return View(course);
         }
 
@@ -139,12 +153,15 @@ namespace Contoso.Controllers
                 db.Entry(courseToDelete).State = EntityState.Deleted;
                 // Generate SQL DELETE command
                 db.SaveChanges();
+                db.Dispose();
             }
             catch (DataException dex)
             {
                 Console.WriteLine($"DataException: {dex.Message}");
                 return RedirectToAction("Delete", new { id = id, saveChangesError = true });
             }
+
+            db.Dispose();
             return RedirectToAction("Index");
         }
 

@@ -16,8 +16,13 @@ namespace Contoso.Controllers
         // GET: Enrollment
         public ActionResult Index()
         {
-            var enrollments = db.Enrollments.Include(e => e.Course).Include(e => e.Student);
-            return View(enrollments.ToList());
+            var enrollments = db.Enrollments
+                .Include(e => e.Course)
+                .Include(e => e.Student)
+                .ToList();
+
+            db.Dispose();
+            return View(enrollments);
         }
 
         // GET: Enrollment/Details/5
@@ -26,10 +31,12 @@ namespace Contoso.Controllers
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            Enrollment enrollment = db.Enrollments.Find(id);
-
+            var enrollment = db.Enrollments.Find(id);
             if (enrollment == null)
+            {
+                db.Dispose();
                 return HttpNotFound($"No enrollment found matching id: {id}.");
+            }
 
             return View(enrollment);
         }
@@ -39,7 +46,6 @@ namespace Contoso.Controllers
         {
             ViewBag.CourseID = new SelectList(db.Courses, "CourseID", "Title");
             ViewBag.StudentID = new SelectList(db.Students, "ID", "LastName");
-
             return View();
         }
 
@@ -56,6 +62,7 @@ namespace Contoso.Controllers
                 {
                     db.Enrollments.Add(enrollment);
                     db.SaveChanges();
+                    db.Dispose();
                     return RedirectToAction("Index");
                 }
             }
@@ -68,6 +75,7 @@ namespace Contoso.Controllers
             ViewBag.CourseID = new SelectList(db.Courses, "CourseID", "Title", enrollment.CourseID);
             ViewBag.StudentID = new SelectList(db.Students, "ID", "LastName", enrollment.StudentID);
 
+            db.Dispose();
             return View(enrollment);
         }
 
@@ -77,10 +85,12 @@ namespace Contoso.Controllers
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            Enrollment enrollment = db.Enrollments.Find(id);
-
+            var enrollment = db.Enrollments.Find(id);
             if (enrollment == null)
+            {
+                db.Dispose();
                 return HttpNotFound();
+            }
 
             ViewBag.CourseID = new SelectList(db.Courses, "CourseID", "Title", enrollment.CourseID);
             ViewBag.StudentID = new SelectList(db.Students, "ID", "LastName", enrollment.StudentID);
@@ -99,7 +109,6 @@ namespace Contoso.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
             var enrollmentToUpdate = db.Enrollments.Find(id);
-
             // Set Modified flag on entity, whitelisted fields in parameters.
             // Future data model fields are automatically "blacklisted" until added here.
             if (TryUpdateModel(enrollmentToUpdate, new string[] { "CourseID", "StudentID", "Grade" }))
@@ -109,6 +118,7 @@ namespace Contoso.Controllers
                     // Flag causes EF to create SQL to update ALL columns in db row (even the ones not changed).
                     // Set entity to Unchanged and individual fields to Modified to control column updates.
                     db.SaveChanges();
+                    db.Dispose();
                     return RedirectToAction("Index");
                 }
                 catch (DataException dex)
@@ -118,6 +128,7 @@ namespace Contoso.Controllers
                 }
             }
 
+            db.Dispose();
             return View(enrollmentToUpdate);
         }
 
@@ -130,9 +141,12 @@ namespace Contoso.Controllers
             if (saveChangesError.GetValueOrDefault())
                 ViewBag.ErrorMessage = "Unable to delete enrollment, please try again.";
 
-            Enrollment enrollment = db.Enrollments.Find(id);
+            var enrollment = db.Enrollments.Find(id);
             if (enrollment == null)
+            {
+                db.Dispose();
                 return HttpNotFound();
+            }
 
             return View(enrollment);
         }
@@ -149,13 +163,16 @@ namespace Contoso.Controllers
                 // Set state of entity in context to Deleted (not yet removed from data store)
                 db.Entry(enrollmentToDelete).State = EntityState.Deleted;
                 // Generate SQL DELETE command
-                db.SaveChanges(); 
+                db.SaveChanges();
+                db.Dispose();
             }
             catch (DataException dex)
             {
                 Console.WriteLine($"DataException: {dex.Message}");
                 return RedirectToAction("Delete", new { id = id, saveChangesError = true });
             }
+
+            db.Dispose();
             return RedirectToAction("Index");
         }
 

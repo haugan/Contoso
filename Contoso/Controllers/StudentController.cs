@@ -16,7 +16,9 @@ namespace Contoso.Controllers
         // GET: Student
         public ActionResult Index()
         {
-            return View(db.Students.ToList());
+            var students = db.Students.ToList();
+            db.Dispose();
+            return View(students);
         }
 
         // GET: Student/Details/5
@@ -25,10 +27,14 @@ namespace Contoso.Controllers
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            Student student = db.Students.Find(id);
+            var student = db.Students.Find(id);
             if (student == null)
+            {
+                db.Dispose();
                 return HttpNotFound($"No student found matching id: {id}.");
+            }
 
+            db.Dispose();
             return View(student);
         }
 
@@ -51,7 +57,7 @@ namespace Contoso.Controllers
                 {
                     db.Students.Add(student);
                     db.SaveChanges();
-
+                    db.Dispose();
                     return RedirectToAction("Index");
                 }
             }
@@ -61,6 +67,7 @@ namespace Contoso.Controllers
                 ModelState.AddModelError("", "Unable to register new student, please try again.");                
             }
 
+            db.Dispose();
             return View(student);
         }
 
@@ -70,10 +77,14 @@ namespace Contoso.Controllers
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            Student student = db.Students.Find(id);
+            var student = db.Students.Find(id);
             if (student == null)
+            {
+                db.Dispose();
                 return HttpNotFound();
+            }
 
+            db.Dispose();
             return View(student);
         }
 
@@ -96,6 +107,7 @@ namespace Contoso.Controllers
                 try
                 {
                     db.SaveChanges();
+                    db.Dispose();
                     return RedirectToAction("Index");
                 }
                 catch (DataException dex)
@@ -105,6 +117,7 @@ namespace Contoso.Controllers
                 }
             }
 
+            db.Dispose();
             return View(existingStudent);
         }
 
@@ -117,10 +130,14 @@ namespace Contoso.Controllers
             if (saveChangesError.GetValueOrDefault())
                 ViewBag.ErrorMessage = "Unable to delete student, please try again.";
 
-            Student student = db.Students.Find(id);
+            var student = db.Students.Find(id);
             if (student == null)
+            {
+                db.Dispose();
                 return HttpNotFound();
+            }
 
+            db.Dispose();
             return View(student);
         }
 
@@ -137,12 +154,15 @@ namespace Contoso.Controllers
                 db.Entry(studentToDelete).State = EntityState.Deleted;
                 // Generate SQL DELETE command
                 db.SaveChanges();
+                db.Dispose();
             }
             catch (DataException dex)
             {
                 Console.WriteLine($"DataException: {dex.Message}");
                 return RedirectToAction("Delete", new { id = id, saveChangesError = true });
             }
+
+            db.Dispose();
             return RedirectToAction("Index");
         }
 
