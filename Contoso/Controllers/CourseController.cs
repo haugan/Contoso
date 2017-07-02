@@ -91,7 +91,7 @@ namespace Contoso.Controllers
             var courseToUpdate = db.Courses.Find(id);
 
             // Set Modified flag on entity, whitelisted fields in parameters.
-            if (TryUpdateModel(courseToUpdate, "", new string[] { "CourseID", "Title", "Credits" }))
+            if (TryUpdateModel(courseToUpdate, new string[] { "CourseID", "Title", "Credits" }))
             {
                 try
                 {
