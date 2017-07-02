@@ -22,22 +22,26 @@
         <dd>@Html.DisplayFor(model => model.EnrollmentDate)</dd>
         <dt>Course enrollments</dt>
         <dd>
-            <table class="table table-responsive table-striped table-hover">
-                <tr>
-                    <th>Course title</th>
-                    <th>Student grade</th>
-                </tr>
-                @foreach (var item in Model.Enrollments)
-                {
+            <table class="table table-striped table-hover">
+                <thead>
                     <tr>
-                        <td>
-                            <a title="View course details" href="@Url.Action("Details", "Course", new { id=item.CourseID })">@item.Course.Title</a>
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Grade)
-                        </td>
+                        <th>Course title</th>
+                        <th>Student grade</th>
                     </tr>
-                }
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Enrollments)
+                    {
+                        <tr>
+                            <td>
+                                <a title="View course details" href="@Url.Action("Details", "Course", new { id=item.CourseID })">@item.Course.Title</a>
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Grade)
+                            </td>
+                        </tr>
+                    }
+                </tbody>
             </table>
         </dd>
     </dl>
