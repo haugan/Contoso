@@ -14,43 +14,40 @@
 </div>
 
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
     <div class="form-horizontal">
-
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.CourseID, "CourseID", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("CourseID", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.CourseID, "", new { @class = "text-danger" })
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.CourseID, "CourseID", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("CourseID", null, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.CourseID, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(model => model.StudentID, "StudentID", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("StudentID", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.StudentID, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.StudentID, "StudentID", htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownList("StudentID", null, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.StudentID, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(model => model.Grade, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EnumDropDownListFor(model => model.Grade, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.Grade, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.Grade, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EnumDropDownListFor(model => model.Grade, htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Grade, "", new { @class = "text-danger" })
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <button title="Register new enrollment" type="submit" class="btn btn-success">
-                    <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
-                    Save
-                </button>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <button title="Register new enrollment" type="submit" class="btn btn-success">
+                        <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+                        Save
+                    </button>
+                </div>
             </div>
-        </div>
     </div>
 }
 

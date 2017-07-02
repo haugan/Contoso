@@ -13,16 +13,17 @@
     </a>
 </div>
 
-
 @using (Html.BeginForm())
 {
+    <!--ANTI CSRF-->
     @Html.AntiForgeryToken()
-    
+    <!--FORM-->
     <div class="form-horizontal">
-
+        <!--VALIDATION ERROR SUMMARY-->
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <!--HIDDEN FIELDS-->
         @Html.HiddenFor(model => model.ID)
-
+        <!--LASTNAME-->
         <div class="form-group">
             @Html.LabelFor(model => model.LastName, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -30,6 +31,7 @@
                 @Html.ValidationMessageFor(model => model.LastName, "", new { @class = "text-danger" })
             </div>
         </div>
+        <!--FIRSTNAME-->
         <div class="form-group">
             @Html.LabelFor(model => model.FirstMidName, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -37,6 +39,7 @@
                 @Html.ValidationMessageFor(model => model.FirstMidName, "", new { @class = "text-danger" })
             </div>
         </div>
+        <!--ENROLLMENT DATE-->
         <div class="form-group">
             @Html.LabelFor(model => model.EnrollmentDate, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
@@ -44,6 +47,7 @@
                 @Html.ValidationMessageFor(model => model.EnrollmentDate, "", new { @class = "text-danger" })
             </div>
         </div>
+        <!--SUBMIT-->
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
                 <button title="Save changes to student" type="submit" class="btn btn-success">

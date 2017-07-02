@@ -1,5 +1,6 @@
 ﻿using Contoso.DAL;
 using Contoso.Models;
+using System;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
@@ -55,9 +56,9 @@ namespace Contoso.Controllers
                     return RedirectToAction("Index");
                 }
             }
-            catch (DataException /*dex*/)
+            catch (DataException dex)
             {
-                // TODO: Write line to log error.
+                Console.WriteLine($"DataException: {dex.Message}");
                 ModelState.AddModelError("", "Unable to register new course, please try again.");
             }
 
@@ -91,19 +92,17 @@ namespace Contoso.Controllers
             var courseToUpdate = db.Courses.Find(id);
 
             // Set Modified flag on entity, whitelisted fields in parameters.
+            // Future data model fields are automatically "blacklisted" until added here.
             if (TryUpdateModel(courseToUpdate, new string[] { "CourseID", "Title", "Credits" }))
             {
                 try
                 {
-                    // Flag causes EF to create SQL to update ALL columns in db row (even the ones not changed).
-                    // Set entity to Unchanged and individual fields to Modified to control column updates.
                     db.SaveChanges();
-
                     return RedirectToAction("Index");
                 }
-                catch (DataException /* dex */)
+                catch (DataException dex)
                 {
-                    // Log the error (uncomment dex variable name and add a line here to write a log.
+                    Console.WriteLine($"DataException: {dex.Message}");
                     ModelState.AddModelError("", "Unable to save changes, please try again.");
                 }
             }
