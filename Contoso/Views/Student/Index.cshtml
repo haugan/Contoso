@@ -16,9 +16,15 @@
     <table class="table table-striped table-hover">
         <thead>
             <tr>
-                <th>Lastname</th>
-                <th>Firstname</th>
-                <th>Enrollment date</th>
+                <th>
+                    @Html.ActionLink("Lastname", "Index", new { sortOrder = ViewBag.NameSortParam })
+                </th>
+                <th>
+                    Firstname
+                </th>
+                <th>
+                    @Html.ActionLink("Enrollment date", "Index", new { sortOrder = ViewBag.DateSortParam })
+                </th>
                 <th></th>
             </tr>
         </thead>

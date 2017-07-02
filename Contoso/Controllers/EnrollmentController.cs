@@ -14,15 +14,34 @@ namespace Contoso.Controllers
         private SchoolContext db = new SchoolContext();
 
         // GET: Enrollment
-        public ActionResult Index()
+        public ActionResult Index(string sortOrder)
         {
             var enrollments = db.Enrollments
                 .Include(e => e.Course)
-                .Include(e => e.Student)
-                .ToList();
+                .Include(e => e.Student);
 
+            ViewBag.TitleSortParam = (String.IsNullOrEmpty(sortOrder)) ? "title_desc" : ""; // Empty is default; title_asc
+            ViewBag.NameSortParam = (sortOrder == "name_asc") ? "name_desc" : "name_asc";
+
+            switch (sortOrder)
+            {
+                case "title_desc":
+                    enrollments = enrollments.OrderByDescending(c => c.Course.Title);
+                    break;
+                case "name_asc":
+                    enrollments = enrollments.OrderBy(c => c.Student.LastName);
+                    break;
+                case "name_desc":
+                    enrollments = enrollments.OrderByDescending(c => c.Student.LastName);
+                    break;
+                default:
+                    enrollments = enrollments.OrderBy(c => c.Course.Title);
+                    break;
+            }
+
+            var enrollmentsList = enrollments.ToList();
             db.Dispose();
-            return View(enrollments);
+            return View(enrollmentsList);
         }
 
         // GET: Enrollment/Details/5

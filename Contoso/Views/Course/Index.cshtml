@@ -16,8 +16,12 @@
     <table class="table table-striped table-hover">
         <thead>
             <tr>
-                <th>Course title</th>
-                <th>Course credits</th>
+                <th>
+                    @Html.ActionLink("Title", "Index", new { sortOrder = ViewBag.TitleSortParam })
+                </th>
+                <th>
+                    @Html.ActionLink("Credits", "Index", new { sortOrder = ViewBag.CreditsSortParam })
+                </th>
                 <th></th>
             </tr>
         </thead>

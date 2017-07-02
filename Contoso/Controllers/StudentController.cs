@@ -14,11 +14,31 @@ namespace Contoso.Controllers
         private SchoolContext db = new SchoolContext();
 
         // GET: Student
-        public ActionResult Index()
+        public ActionResult Index(string sortOrder)
         {
-            var students = db.Students.ToList();
+            ViewBag.NameSortParam = (String.IsNullOrEmpty(sortOrder)) ? "name_desc" : ""; // Empty is default; name_asc
+            ViewBag.DateSortParam = (sortOrder == "date_asc") ? "date_desc" : "date_asc";
+
+            var students = from s in db.Students select s;
+            switch (sortOrder)
+            {
+                case "name_desc":
+                    students = students.OrderByDescending(s => s.LastName);
+                    break;
+                case "date_asc":
+                    students = students.OrderBy(s => s.EnrollmentDate);
+                    break;
+                case "date_desc":
+                    students = students.OrderByDescending(s => s.EnrollmentDate);
+                    break;
+                default:
+                    students = students.OrderBy(s => s.LastName);
+                    break;
+            }
+
+            var studentsList = students.ToList(); // ToList() executes SQL query
             db.Dispose();
-            return View(students);
+            return View(studentsList);
         }
 
         // GET: Student/Details/5
