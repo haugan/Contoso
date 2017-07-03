@@ -21,10 +21,13 @@ namespace Contoso.Controllers
                 .Include(e => e.Student);
 
             if (!String.IsNullOrEmpty(searchString))
+            {
+                searchString.ToUpper();
                 enrollments = enrollments.Where(e =>
-                    e.Course.Title.Contains(searchString) ||
-                    e.Student.LastName.Contains(searchString) ||
-                    e.Student.FirstMidName.Contains(searchString));
+                    e.Course.Title.ToUpper().Contains(searchString) ||
+                    e.Student.LastName.ToUpper().Contains(searchString) ||
+                    e.Student.FirstMidName.ToUpper().Contains(searchString));
+            }
 
             ViewBag.TitleSortParam = (String.IsNullOrEmpty(sortOrder)) ? "title_desc" : ""; // Empty is default; title_asc
             ViewBag.NameSortParam = (sortOrder == "name_asc") ? "name_desc" : "name_asc";

@@ -22,8 +22,11 @@ namespace Contoso.Controllers
             var courses = from c in db.Courses select c;
 
             if (!String.IsNullOrEmpty(searchString))
+            {
+                searchString.ToUpper();
                 courses = courses.Where(c => 
-                    c.Title.Contains(searchString));
+                    c.Title.ToUpper().Contains(searchString));
+            }
 
             switch (sortOrder)
             {
