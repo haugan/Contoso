@@ -62,7 +62,6 @@ namespace Contoso.Controllers
                 return HttpNotFound($"No course found matching id: {id}.");
             }
 
-            db.Dispose();
             return View(course);
         }
 
@@ -112,7 +111,6 @@ namespace Contoso.Controllers
                 return HttpNotFound();
             }
 
-            db.Dispose();
             return View(course);
         }
 

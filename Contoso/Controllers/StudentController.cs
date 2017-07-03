@@ -1,5 +1,4 @@
-﻿
-using Contoso.DAL;
+﻿using Contoso.DAL;
 using Contoso.Models;
 using System;
 using System.Data;
@@ -71,7 +70,6 @@ namespace Contoso.Controllers
                 return HttpNotFound($"No student found matching id: {id}.");
             }
 
-            db.Dispose();
             return View(student);
         }
 
@@ -121,7 +119,6 @@ namespace Contoso.Controllers
                 return HttpNotFound();
             }
 
-            db.Dispose();
             return View(student);
         }
 
@@ -174,7 +171,6 @@ namespace Contoso.Controllers
                 return HttpNotFound();
             }
 
-            db.Dispose();
             return View(student);
         }
 
