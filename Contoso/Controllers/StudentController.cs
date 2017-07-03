@@ -14,12 +14,18 @@ namespace Contoso.Controllers
         private SchoolContext db = new SchoolContext();
 
         // GET: Student
-        public ActionResult Index(string sortOrder)
+        public ActionResult Index(string sortOrder, string searchString)
         {
+            var students = from s in db.Students select s;
+
+            if (!String.IsNullOrEmpty(searchString))
+                students = students.Where(s => 
+                    s.LastName.Contains(searchString) || 
+                    s.FirstMidName.Contains(searchString));
+
             ViewBag.NameSortParam = (String.IsNullOrEmpty(sortOrder)) ? "name_desc" : ""; // Empty is default; name_asc
             ViewBag.DateSortParam = (sortOrder == "date_asc") ? "date_desc" : "date_asc";
 
-            var students = from s in db.Students select s;
             switch (sortOrder)
             {
                 case "name_desc":

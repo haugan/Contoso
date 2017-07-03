@@ -14,12 +14,17 @@ namespace Contoso.Controllers
         private SchoolContext db = new SchoolContext();
 
         // GET: Course
-        public ActionResult Index(string sortOrder)
+        public ActionResult Index(string sortOrder, string searchString)
         {
             ViewBag.TitleSortParam = (String.IsNullOrEmpty(sortOrder)) ? "title_desc" : ""; // Empty is default; title_asc
             ViewBag.CreditsSortParam = (sortOrder == "credits_asc") ? "credits_desc" : "credits_asc";
 
             var courses = from c in db.Courses select c;
+
+            if (!String.IsNullOrEmpty(searchString))
+                courses = courses.Where(c => 
+                    c.Title.Contains(searchString));
+
             switch (sortOrder)
             {
                 case "title_desc":
