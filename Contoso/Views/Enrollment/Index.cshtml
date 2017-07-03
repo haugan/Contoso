@@ -1,68 +1,100 @@
 ﻿@model IEnumerable<Contoso.Models.Enrollment>
-
 @{
     ViewBag.Title = "Enrollments";
 }
 
+<!--PAGE HEADER-->
 <div class="page-header">
     <h1>Enrollment index</h1>
-    <h4>Click new enrollment to register.</h4>
-    <a title="Back to index" href="@Url.Action("Index", "Home")">
-        <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
-        Back to home
-    </a>
+    <h4>Search, sort, browse, view, edit, delete, or create enrollments.</h4>
 </div>
-<div class="table-responsive">
-    <table class="table table-striped table-hover">
-        <thead>
-            <tr>
-                <th>
-                    @Html.ActionLink("Course title", "Index", new { sortOrder = ViewBag.TitleSortParam })
-                </th>
-                <th>
-                    @Html.ActionLink("Student name", "Index", new { sortOrder = ViewBag.NameSortParam })
-                </th>
-                <th>
-                    Student grade
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        <a title="View course details" href="@Url.Action("Details", "Course", new { id=item.CourseID })">
-                            @item.Course.Title
-                        </a>
-                    </td>
-                    <td>
-                        <a title="View student details" href="@Url.Action("Details", "Student", new { id=item.StudentID })">
-                            @item.Student.LastName, @Html.DisplayFor(modelItem => item.Student.FirstMidName)
-                        </a>
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Grade)
-                    </td>
-                    <td>
-                        <a title="View enrollment details" href="@Url.Action("Details", "Enrollment", new { id=item.EnrollmentID })" class="btn btn-info btn-xs">
-                            <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
-                        </a>
-                        <a title="Edit enrollment data" href="@Url.Action("Edit", "Enrollment", new { id=item.EnrollmentID })" class="btn btn-warning btn-xs">
-                            <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
-                        </a>
-                        <a title="Delete this enrollment" href="@Url.Action("Delete", "Enrollment", new { id=item.EnrollmentID })" class="btn btn-danger btn-xs">
-                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                        </a>
-                    </td>
-                </tr>
-            }
-        </tbody>
 
-    </table>
+<!--ALERTS-->
+<div class="alert alert-info alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <strong>Tutorial!</strong>
+    Click <span class="glyphicon glyphicon-home" aria-hidden="true"></span> to go back,
+    or <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> to register a new entry to the database.
+    Visible entries can be filtered from the search bar, sorted (by clicking table headers) and navigated (with the page buttons in table footer).
+    To view entry details; click the row links. Entries can also be <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> edited and <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> deleted.
 </div>
-<a title="Register new enrollment" href="@Url.Action("Create", "Enrollment")" class="btn btn-success">
-    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-    New enrollment
-</a>
+
+<!--DATATABLE PANEL-->
+<div class="panel panel-default">
+    <!--PANEL HEADER-->
+    <div class="panel-heading">
+        <h3 class="panel-title">Search: |_________!</h3>
+    </div>
+    <!--TABLE>-->
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <!--TABLE HEADER-->
+            <thead>
+                <tr>
+                    <th>
+                        @Html.ActionLink("Course title", "Index", new { sortOrder = ViewBag.TitleSortParam })
+                    </th>
+                    <th>
+                        @Html.ActionLink("Student name", "Index", new { sortOrder = ViewBag.NameSortParam })
+                    </th>
+                    <th class="text-center">
+                        Student grade
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <!--TABLE BODY-->
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <a title="View course details" href="@Url.Action("Details", "Course", new { id=item.CourseID })">
+                                @item.Course.Title
+                            </a>
+                        </td>
+                        <td>
+                            <a title="View student details" href="@Url.Action("Details", "Student", new { id=item.StudentID })">
+                                @item.Student.LastName, @Html.DisplayFor(modelItem => item.Student.FirstMidName)
+                            </a>
+                        </td>
+                        <td class="text-center">
+                            @Html.DisplayFor(modelItem => item.Grade)
+                        </td>
+                        <td class="pull-right">
+                            <a title="View enrollment details" href="@Url.Action("Details", "Enrollment", new { id=item.EnrollmentID })" class="btn btn-info btn-xs">
+                                <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+                            </a>
+                            <a title="Edit enrollment data" href="@Url.Action("Edit", "Enrollment", new { id=item.EnrollmentID })" class="btn btn-warning btn-xs">
+                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                            </a>
+                            <a title="Delete this enrollment" href="@Url.Action("Delete", "Enrollment", new { id=item.EnrollmentID })" class="btn btn-danger btn-xs">
+                                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <!--PANEL FOOTER-->
+        <div class="panel-footer">
+            Page 1 | 2 | 3
+        </div>
+    </div>
+</div>
+
+<!--BOTTOM BUTTON LINKS -->
+<div class="row">
+    <div class="col col-xs-10">
+        <a title="Go back to welcome page" href="@Url.Action("Index", "Home")" class="btn btn-link pull-left" role="button">
+            <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+            Home
+        </a>
+    </div>
+    <div class="col col-xs-2">
+        <a title="Register new enrollment" href="@Url.Action("Create", "Enrollment")" class="btn btn-success btn-sm pull-right" role="button">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            Add
+        </a>
+    </div>
+</div>
