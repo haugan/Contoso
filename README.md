@@ -5,5 +5,7 @@ I'm building this web application to further develop my understanding
 of ASP.NET MVC, Entity Framework, LINQ, and ASP Identity.
 
 
-### Work in progress (thank God for Bootstrap)
+
+
+### Design work in progress
 ![A typical index datatable](https://s16.postimg.org/o4bcrsu45/contoso_1.png)
