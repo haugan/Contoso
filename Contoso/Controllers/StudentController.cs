@@ -1,4 +1,5 @@
-﻿using Contoso.DAL;
+﻿
+using Contoso.DAL;
 using Contoso.Models;
 using System;
 using System.Data;
@@ -19,23 +20,33 @@ namespace Contoso.Controllers
             var students = from s in db.Students select s;
 
             if (!String.IsNullOrEmpty(searchString))
-                students = students.Where(s => 
-                    s.LastName.Contains(searchString) || 
-                    s.FirstMidName.Contains(searchString));
+            {
+                searchString = searchString.ToUpper();
+                students = students.Where(s =>
+                    s.LastName.ToUpper().Contains(searchString) ||
+                    s.FirstMidName.ToUpper().Contains(searchString));
+            }
 
-            ViewBag.NameSortParam = (String.IsNullOrEmpty(sortOrder)) ? "name_desc" : ""; // Empty is default; name_asc
+            ViewBag.LastNameSortParam = (String.IsNullOrEmpty(sortOrder)) ? "lastName_desc" : "";
+            ViewBag.FirstNameSortParam = (sortOrder == "firstName_asc") ? "firstName_desc" : "firstName_asc";
             ViewBag.DateSortParam = (sortOrder == "date_asc") ? "date_desc" : "date_asc";
 
             switch (sortOrder)
             {
-                case "name_desc":
+                case "lastName_desc":
                     students = students.OrderByDescending(s => s.LastName);
                     break;
-                case "date_asc":
-                    students = students.OrderBy(s => s.EnrollmentDate);
+                case "firstName_desc":
+                    students = students.OrderByDescending(s => s.FirstMidName);
+                    break;
+                case "firstName_asc":
+                    students = students.OrderBy(s => s.FirstMidName);
                     break;
                 case "date_desc":
                     students = students.OrderByDescending(s => s.EnrollmentDate);
+                    break;
+                case "date_asc":
+                    students = students.OrderBy(s => s.EnrollmentDate);
                     break;
                 default:
                     students = students.OrderBy(s => s.LastName);
@@ -90,7 +101,7 @@ namespace Contoso.Controllers
             catch (DataException dex)
             {
                 Console.WriteLine($"DataException: {dex.Message}");
-                ModelState.AddModelError("", "Unable to register new student, please try again.");                
+                ModelState.AddModelError("", "Unable to register new student, please try again.");
             }
 
             db.Dispose();
@@ -128,7 +139,7 @@ namespace Contoso.Controllers
 
             // Set Modified flag on entity, whitelisted fields in parameters.
             // Future data model fields are automatically "blacklisted" until added here.
-            if (TryUpdateModel(existingStudent, new string[] {"LastName","FirstMidName","EnrollmentDate"}))
+            if (TryUpdateModel(existingStudent, new string[] { "LastName", "FirstMidName", "EnrollmentDate" }))
             {
                 try
                 {
@@ -175,7 +186,7 @@ namespace Contoso.Controllers
             try
             {
                 // Avoid unnecessary SQL query for retrieving row
-                var studentToDelete = new Student () { ID = id };
+                var studentToDelete = new Student() { ID = id };
                 // Set state of entity in context to Deleted (not yet removed from data store)
                 db.Entry(studentToDelete).State = EntityState.Deleted;
                 // Generate SQL DELETE command

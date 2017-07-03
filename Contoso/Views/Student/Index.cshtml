@@ -17,10 +17,10 @@
         <thead>
             <tr>
                 <th>
-                    @Html.ActionLink("Lastname", "Index", new { sortOrder = ViewBag.NameSortParam })
+                    @Html.ActionLink("Lastname", "Index", new { sortOrder = ViewBag.LastNameSortParam })
                 </th>
                 <th>
-                    Firstname
+                    @Html.ActionLink("Firstname", "Index", new { sortOrder = ViewBag.FirstNameSortParam })
                 </th>
                 <th>
                     @Html.ActionLink("Enrollment date", "Index", new { sortOrder = ViewBag.DateSortParam })
