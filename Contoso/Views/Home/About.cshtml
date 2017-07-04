@@ -1,7 +1,93 @@
-﻿@{
-    ViewBag.Title = "About";
-}
-<h2>@ViewBag.Title.</h2>
-<h3>@ViewBag.Message</h3>
+﻿@model IEnumerable<Contoso.ViewModels.EnrollmentDateGroup>
 
-<p>Use this area to provide additional information.</p>
+@{
+    ViewBag.Title = "Student Body Statistics";
+}
+
+<!--PAGE HEADER-->
+<div class="page-header">
+    <h1>Student stats</h1>
+    <h4>See how many students enrolled at different dates.</h4>
+</div>
+
+<!--ALERTS-->
+<div class="alert alert-info alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <strong>Tutorial!</strong>
+    Click <span class="glyphicon glyphicon-home" aria-hidden="true"></span> to go back.
+    Visible entries can be filtered from the <span class="glyphicon glyphicon-search" aria-hidden="true"></span> search box, sorted (by clicking table headers) and navigated (with the page buttons in table footer).
+    To view entry details; click the row links.
+</div>
+
+<!--DATA TABLE PANEL-->
+<div class="panel panel-default">
+    <!--PANEL HEADER-->
+    <div class="panel-heading">
+        <!--SEARCH BOX-->
+        @using (Html.BeginForm("Index", "Student", FormMethod.Get, new { @class = "form-inline" }))
+        {
+            <div class="row">
+                <div class="col-xs-6">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+                        </span>
+                        @Html.TextBox("searchString", ViewBag.CurrentFilter as string, new { @class = "form-control", placeholder = "Enrollment date" })
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <!--TABLE-->
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <!--TABLE HEADER-->
+            <thead>
+                <tr>
+                    <th>
+                        Enrollment date
+                    </th>
+                    <th>
+                        Students
+                    </th>
+                </tr>
+            </thead>
+            <!--TABLE BODY-->
+            <tbody>
+                @foreach (var item in Model)
+            {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.EnrollmentDate)
+                        </td>
+                        <td>
+                            @item.StudentCount
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <!--PANEL FOOTER PAGING-->
+        <div class="panel-footer">
+            Page 1 | 3 | 3 | 4
+            @*Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+            @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))*@
+        </div>
+    </div>
+</div>
+
+<!--BOTTOM BUTTON LINKS -->
+<div class="row">
+    <div class="col col-xs-10">
+        <a title="Go back to welcome page" href="@Url.Action("Index", "Home")" class="btn btn-link pull-left" role="button">
+            <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+            Home
+        </a>
+    </div>
+    <div class="col col-xs-2">
+        @*<a title="Register new course" href="@Url.Action("Create", "Student")" class="btn btn-success btn-sm pull-right" role="button">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+            Add
+        </a>*@
+    </div>
+</div>

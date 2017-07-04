@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Contoso.DAL;
+using Contoso.ViewModels;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace Contoso.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly SchoolContext db = new SchoolContext();
+
         public ActionResult Index()
         {
             return View();
@@ -15,9 +16,16 @@ namespace Contoso.Controllers
 
         public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
+            IQueryable<EnrollmentDateGroup> query = 
+                from student in db.Students
+                group student by student.EnrollmentDate into dateGroup
+                select new EnrollmentDateGroup()
+                {
+                    EnrollmentDate = dateGroup.Key,
+                    StudentCount = dateGroup.Count()
+                };
 
-            return View();
+            return View(query.ToList());
         }
 
         public ActionResult Contact()
@@ -25,6 +33,12 @@ namespace Contoso.Controllers
             ViewBag.Message = "Your contact page.";
 
             return View();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            db.Dispose();
+            base.Dispose(disposing);
         }
     }
 }
