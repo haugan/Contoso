@@ -1,5 +1,6 @@
 ﻿using Contoso.DAL;
 using Contoso.Models;
+using PagedList;
 using System;
 using System.Data;
 using System.Data.Entity;
@@ -14,39 +15,46 @@ namespace Contoso.Controllers
         private SchoolContext db = new SchoolContext();
 
         // GET: Course
-        public ActionResult Index(string sortOrder, string searchString)
+        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
+            ViewBag.CurrentSort = sortOrder;
             ViewBag.TitleSortParam = (String.IsNullOrEmpty(sortOrder)) ? "title_desc" : ""; // Empty is default; title_asc
             ViewBag.CreditsSortParam = (sortOrder == "credits_asc") ? "credits_desc" : "credits_asc";
 
-            var courses = from c in db.Courses select c;
+            if (searchString != null)
+                page = 1;
+            else
+                searchString = currentFilter;
 
+            ViewBag.CurrentFilter = searchString;
+
+            var courseQuery = from c in db.Courses select c;
             if (!String.IsNullOrEmpty(searchString))
             {
                 searchString.ToUpper();
-                courses = courses.Where(c => 
+                courseQuery = courseQuery.Where(c => 
                     c.Title.ToUpper().Contains(searchString));
             }
 
             switch (sortOrder)
             {
                 case "title_desc":
-                    courses = courses.OrderByDescending(c => c.Title);
+                    courseQuery = courseQuery.OrderByDescending(c => c.Title);
                     break;
                 case "credits_asc":
-                    courses = courses.OrderBy(c => c.Credits);
+                    courseQuery = courseQuery.OrderBy(c => c.Credits);
                     break;
                 case "credits_desc":
-                    courses = courses.OrderByDescending(c => c.Credits);
+                    courseQuery = courseQuery.OrderByDescending(c => c.Credits);
                     break;
                 default:
-                    courses = courses.OrderBy(c => c.Title);
+                    courseQuery = courseQuery.OrderBy(c => c.Title);
                     break;
             }
 
-            var coursesList = courses.ToList(); // ToList() executes SQL query
-            db.Dispose();
-            return View(coursesList);
+            int pageSize = 5;
+            int pageNumber = (page ?? 1); // (Null-coalescing operator) return 1 if page is null
+            return View(courseQuery.ToPagedList(pageNumber, pageSize));
         }
 
         // GET: Course/Details/5
@@ -57,10 +65,7 @@ namespace Contoso.Controllers
 
             Course course = db.Courses.Find(id);
             if (course == null)
-            {
-                db.Dispose();
                 return HttpNotFound($"No course found matching id: {id}.");
-            }
 
             return View(course);
         }
@@ -84,17 +89,14 @@ namespace Contoso.Controllers
                 {
                     db.Courses.Add(course);
                     db.SaveChanges();
-                    db.Dispose();
                     return RedirectToAction("Index");
                 }
             }
             catch (DataException dex)
             {
-                Console.WriteLine($"DataException: {dex.Message}");
-                ModelState.AddModelError("", "Unable to register new course, please try again.");
+                ModelState.AddModelError("", $"Unable to register new course: {dex.Message}");
             }
 
-            db.Dispose();
             return View(course);
         }
 
@@ -106,10 +108,7 @@ namespace Contoso.Controllers
 
             var course = db.Courses.Find(id);
             if (course == null)
-            {
-                db.Dispose();
                 return HttpNotFound();
-            }
 
             return View(course);
         }
@@ -132,17 +131,14 @@ namespace Contoso.Controllers
                 try
                 {
                     db.SaveChanges();
-                    db.Dispose();
                     return RedirectToAction("Index");
                 }
                 catch (DataException dex)
                 {
-                    Console.WriteLine($"DataException: {dex.Message}");
-                    ModelState.AddModelError("", "Unable to save changes, please try again.");
+                    ModelState.AddModelError("", $"Unable to save changes: {dex.Message}.");
                 }
             }
 
-            db.Dispose();
             return View(courseToUpdate);
         }
 
@@ -157,12 +153,8 @@ namespace Contoso.Controllers
 
             var course = db.Courses.Find(id);
             if (course == null)
-            {
-                db.Dispose();
                 return HttpNotFound();
-            }
 
-            db.Dispose();
             return View(course);
         }
 
@@ -179,15 +171,13 @@ namespace Contoso.Controllers
                 db.Entry(courseToDelete).State = EntityState.Deleted;
                 // Generate SQL DELETE command
                 db.SaveChanges();
-                db.Dispose();
             }
             catch (DataException dex)
             {
-                Console.WriteLine($"DataException: {dex.Message}");
+                ModelState.AddModelError("", $"Unable to delete course: {dex.Message}.");
                 return RedirectToAction("Delete", new { id = id, saveChangesError = true });
             }
 
-            db.Dispose();
             return RedirectToAction("Index");
         }
 

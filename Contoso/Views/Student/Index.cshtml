@@ -1,4 +1,8 @@
-﻿@model IEnumerable<Contoso.Models.Student>
+﻿@model PagedList.IPagedList<Contoso.Models.Student>
+@using PagedList.Mvc;
+
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
 @{
     ViewBag.Title = "Students";
 }
@@ -24,7 +28,7 @@
     <!--PANEL HEADER-->
     <div class="panel-heading">
         <!--SEARCH BOX-->
-        @using (Html.BeginForm(new { @class = "form-inline" }))
+        @using (Html.BeginForm("Index", "Student", FormMethod.Get, new { @class = "form-inline" }))
         {
             <div class="row">
                 <div class="col-xs-6">
@@ -32,7 +36,7 @@
                         <span class="input-group-btn">
                             <button class="btn btn-default" type="button"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
                         </span>
-                        @Html.TextBox("searchString", "", new { @class = "form-control", placeholder = "Student name" })
+                        @Html.TextBox("searchString", ViewBag.CurrentFilter as string, new { @class = "form-control", placeholder = "Student name" })
                     </div>
                 </div>
             </div>
@@ -45,13 +49,13 @@
             <thead>
                 <tr>
                     <th>
-                        @Html.ActionLink("Lastname", "Index", new { sortOrder = ViewBag.LastNameSortParam })
+                        @Html.ActionLink("Lastname", "Index", new { sortOrder = ViewBag.LastNameSortParam, currentFilter = ViewBag.CurrentFilter })
                     </th>
                     <th>
-                        @Html.ActionLink("Firstname", "Index", new { sortOrder = ViewBag.FirstNameSortParam })
+                        @Html.ActionLink("Firstname", "Index", new { sortOrder = ViewBag.FirstNameSortParam, currentFilter = ViewBag.CurrentFilter })
                     </th>
                     <th class="text-center">
-                        @Html.ActionLink("Enrollment date", "Index", new { sortOrder = ViewBag.DateSortParam })
+                        @Html.ActionLink("Enrollment date", "Index", new { sortOrder = ViewBag.DateSortParam, currentFilter = ViewBag.CurrentFilter })
                     </th>
                     <th></th>
                 </tr>
@@ -84,9 +88,10 @@
                 }
             </tbody>
         </table>
-        <!--PANEL FOOTER-->
+        <!--PANEL FOOTER PAGING-->
         <div class="panel-footer">
-            Page 1 | 2 | 3
+            Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+            @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
         </div>
     </div>
 </div>

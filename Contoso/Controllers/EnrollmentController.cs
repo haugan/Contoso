@@ -1,5 +1,6 @@
 ﻿using Contoso.DAL;
 using Contoso.Models;
+using PagedList;
 using System;
 using System.Data;
 using System.Data.Entity;
@@ -14,43 +15,48 @@ namespace Contoso.Controllers
         private SchoolContext db = new SchoolContext();
 
         // GET: Enrollment
-        public ActionResult Index(string sortOrder, string searchString)
+        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
-            var enrollments = db.Enrollments
-                .Include(e => e.Course)
-                .Include(e => e.Student);
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.TitleSortParam = (String.IsNullOrEmpty(sortOrder)) ? "title_desc" : ""; // Empty is default; title_asc
+            ViewBag.NameSortParam = (sortOrder == "name_asc") ? "name_desc" : "name_asc";
 
+            if (searchString != null)
+                page = 1;
+            else
+                searchString = currentFilter;
+
+            ViewBag.CurrentFilter = searchString;
+
+            var enrollmentQuery = db.Enrollments.Include(e => e.Course).Include(e => e.Student);
             if (!String.IsNullOrEmpty(searchString))
             {
                 searchString.ToUpper();
-                enrollments = enrollments.Where(e =>
+                enrollmentQuery = enrollmentQuery.Where(e =>
                     e.Course.Title.ToUpper().Contains(searchString) ||
                     e.Student.LastName.ToUpper().Contains(searchString) ||
                     e.Student.FirstMidName.ToUpper().Contains(searchString));
             }
 
-            ViewBag.TitleSortParam = (String.IsNullOrEmpty(sortOrder)) ? "title_desc" : ""; // Empty is default; title_asc
-            ViewBag.NameSortParam = (sortOrder == "name_asc") ? "name_desc" : "name_asc";
-
             switch (sortOrder)
             {
                 case "title_desc":
-                    enrollments = enrollments.OrderByDescending(c => c.Course.Title);
+                    enrollmentQuery = enrollmentQuery.OrderByDescending(c => c.Course.Title);
                     break;
                 case "name_asc":
-                    enrollments = enrollments.OrderBy(c => c.Student.LastName);
+                    enrollmentQuery = enrollmentQuery.OrderBy(c => c.Student.LastName);
                     break;
                 case "name_desc":
-                    enrollments = enrollments.OrderByDescending(c => c.Student.LastName);
+                    enrollmentQuery = enrollmentQuery.OrderByDescending(c => c.Student.LastName);
                     break;
                 default:
-                    enrollments = enrollments.OrderBy(c => c.Course.Title);
+                    enrollmentQuery = enrollmentQuery.OrderBy(c => c.Course.Title);
                     break;
             }
 
-            var enrollmentsList = enrollments.ToList();
-            db.Dispose();
-            return View(enrollmentsList);
+            int pageSize = 5;
+            int pageNumber = (page ?? 1); // (Null-coalescing operator) return 1 if page is null
+            return View(enrollmentQuery.ToPagedList(pageNumber, pageSize));
         }
 
         // GET: Enrollment/Details/5
@@ -61,10 +67,7 @@ namespace Contoso.Controllers
 
             var enrollment = db.Enrollments.Find(id);
             if (enrollment == null)
-            {
-                db.Dispose();
                 return HttpNotFound($"No enrollment found matching id: {id}.");
-            }
 
             return View(enrollment);
         }
@@ -90,20 +93,17 @@ namespace Contoso.Controllers
                 {
                     db.Enrollments.Add(enrollment);
                     db.SaveChanges();
-                    db.Dispose();
                     return RedirectToAction("Index");
                 }
             }
             catch (DataException dex)
             {
-                Console.WriteLine($"DataException: {dex.Message}");
-                ModelState.AddModelError("", "Unable to register new enrollment, please try again.");
+                ModelState.AddModelError("", $"Unable to register new enrollment: {dex.Message}.");
             }
 
             ViewBag.CourseID = new SelectList(db.Courses, "CourseID", "Title", enrollment.CourseID);
             ViewBag.StudentID = new SelectList(db.Students, "ID", "LastName", enrollment.StudentID);
 
-            db.Dispose();
             return View(enrollment);
         }
 
@@ -115,10 +115,7 @@ namespace Contoso.Controllers
 
             var enrollment = db.Enrollments.Find(id);
             if (enrollment == null)
-            {
-                db.Dispose();
                 return HttpNotFound();
-            }
 
             ViewBag.CourseID = new SelectList(db.Courses, "CourseID", "Title", enrollment.CourseID);
             ViewBag.StudentID = new SelectList(db.Students, "ID", "LastName", enrollment.StudentID);
@@ -146,17 +143,14 @@ namespace Contoso.Controllers
                     // Flag causes EF to create SQL to update ALL columns in db row (even the ones not changed).
                     // Set entity to Unchanged and individual fields to Modified to control column updates.
                     db.SaveChanges();
-                    db.Dispose();
                     return RedirectToAction("Index");
                 }
                 catch (DataException dex)
                 {
-                    Console.WriteLine($"DataException: {dex.Message}");
-                    ModelState.AddModelError("", "Unable to save changes, please try again.");
+                    ModelState.AddModelError("", $"Unable to save changes: {dex.Message}.");
                 }
             }
 
-            db.Dispose();
             return View(enrollmentToUpdate);
         }
 
@@ -171,10 +165,7 @@ namespace Contoso.Controllers
 
             var enrollment = db.Enrollments.Find(id);
             if (enrollment == null)
-            {
-                db.Dispose();
                 return HttpNotFound();
-            }
 
             return View(enrollment);
         }
@@ -192,15 +183,13 @@ namespace Contoso.Controllers
                 db.Entry(enrollmentToDelete).State = EntityState.Deleted;
                 // Generate SQL DELETE command
                 db.SaveChanges();
-                db.Dispose();
             }
             catch (DataException dex)
             {
-                Console.WriteLine($"DataException: {dex.Message}");
+                ModelState.AddModelError("", $"Unable to delete enrollment: {dex.Message}.");
                 return RedirectToAction("Delete", new { id = id, saveChangesError = true });
             }
 
-            db.Dispose();
             return RedirectToAction("Index");
         }
 

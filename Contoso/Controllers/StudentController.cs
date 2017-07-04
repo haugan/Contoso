@@ -1,5 +1,6 @@
 ﻿using Contoso.DAL;
 using Contoso.Models;
+using PagedList;
 using System;
 using System.Data;
 using System.Data.Entity;
@@ -14,47 +15,54 @@ namespace Contoso.Controllers
         private SchoolContext db = new SchoolContext();
 
         // GET: Student
-        public ActionResult Index(string sortOrder, string searchString)
+        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
-            var students = from s in db.Students select s;
-
-            if (!String.IsNullOrEmpty(searchString))
-            {
-                searchString = searchString.ToUpper();
-                students = students.Where(s =>
-                    s.LastName.ToUpper().Contains(searchString) ||
-                    s.FirstMidName.ToUpper().Contains(searchString));
-            }
-
+            ViewBag.CurrentSort = sortOrder;
             ViewBag.LastNameSortParam = (String.IsNullOrEmpty(sortOrder)) ? "lastName_desc" : "";
             ViewBag.FirstNameSortParam = (sortOrder == "firstName_asc") ? "firstName_desc" : "firstName_asc";
             ViewBag.DateSortParam = (sortOrder == "date_asc") ? "date_desc" : "date_asc";
 
+            if (searchString != null)
+                page = 1;
+            else
+                searchString = currentFilter;
+
+            ViewBag.CurrentFilter = searchString;
+
+            var studentQuery = from s in db.Students select s;
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                searchString = searchString.ToUpper();
+                studentQuery = studentQuery.Where(s =>
+                    s.LastName.ToUpper().Contains(searchString) ||
+                    s.FirstMidName.ToUpper().Contains(searchString));
+            }
+
             switch (sortOrder)
             {
                 case "lastName_desc":
-                    students = students.OrderByDescending(s => s.LastName);
+                    studentQuery = studentQuery.OrderByDescending(s => s.LastName);
                     break;
                 case "firstName_desc":
-                    students = students.OrderByDescending(s => s.FirstMidName);
+                    studentQuery = studentQuery.OrderByDescending(s => s.FirstMidName);
                     break;
                 case "firstName_asc":
-                    students = students.OrderBy(s => s.FirstMidName);
+                    studentQuery = studentQuery.OrderBy(s => s.FirstMidName);
                     break;
                 case "date_desc":
-                    students = students.OrderByDescending(s => s.EnrollmentDate);
+                    studentQuery = studentQuery.OrderByDescending(s => s.EnrollmentDate);
                     break;
                 case "date_asc":
-                    students = students.OrderBy(s => s.EnrollmentDate);
+                    studentQuery = studentQuery.OrderBy(s => s.EnrollmentDate);
                     break;
                 default:
-                    students = students.OrderBy(s => s.LastName);
+                    studentQuery = studentQuery.OrderBy(s => s.LastName);
                     break;
             }
 
-            var studentsList = students.ToList(); // ToList() executes SQL query
-            db.Dispose();
-            return View(studentsList);
+            int pageSize = 5;
+            int pageNumber = (page ?? 1); // (Null-coalescing operator) return 1 if page is null
+            return View(studentQuery.ToPagedList(pageNumber, pageSize));
         }
 
         // GET: Student/Details/5
@@ -65,10 +73,7 @@ namespace Contoso.Controllers
 
             var student = db.Students.Find(id);
             if (student == null)
-            {
-                db.Dispose();
                 return HttpNotFound($"No student found matching id: {id}.");
-            }
 
             return View(student);
         }
@@ -92,17 +97,14 @@ namespace Contoso.Controllers
                 {
                     db.Students.Add(student);
                     db.SaveChanges();
-                    db.Dispose();
                     return RedirectToAction("Index");
                 }
             }
             catch (DataException dex)
             {
-                Console.WriteLine($"DataException: {dex.Message}");
-                ModelState.AddModelError("", "Unable to register new student, please try again.");
+                ModelState.AddModelError("", $"Unable to register new student: {dex.Message}.");
             }
 
-            db.Dispose();
             return View(student);
         }
 
@@ -114,10 +116,7 @@ namespace Contoso.Controllers
 
             var student = db.Students.Find(id);
             if (student == null)
-            {
-                db.Dispose();
                 return HttpNotFound();
-            }
 
             return View(student);
         }
@@ -141,17 +140,14 @@ namespace Contoso.Controllers
                 try
                 {
                     db.SaveChanges();
-                    db.Dispose();
                     return RedirectToAction("Index");
                 }
                 catch (DataException dex)
                 {
-                    Console.WriteLine($"DataException: {dex.Message}");
-                    ModelState.AddModelError("", "Unable to save changes, please try again.");
+                    ModelState.AddModelError("", $"Unable to save changes: {dex.Message}.");
                 }
             }
 
-            db.Dispose();
             return View(existingStudent);
         }
 
@@ -166,10 +162,7 @@ namespace Contoso.Controllers
 
             var student = db.Students.Find(id);
             if (student == null)
-            {
-                db.Dispose();
                 return HttpNotFound();
-            }
 
             return View(student);
         }
@@ -187,15 +180,13 @@ namespace Contoso.Controllers
                 db.Entry(studentToDelete).State = EntityState.Deleted;
                 // Generate SQL DELETE command
                 db.SaveChanges();
-                db.Dispose();
             }
             catch (DataException dex)
             {
-                Console.WriteLine($"DataException: {dex.Message}");
+                ModelState.AddModelError("", $"Unable to delete student: {dex.Message}.");
                 return RedirectToAction("Delete", new { id = id, saveChangesError = true });
             }
 
-            db.Dispose();
             return RedirectToAction("Index");
         }
 
